@@ -1,1 +1,3 @@
 *.jir
+.jaseci_logs/
+js.session
