@@ -4,7 +4,6 @@ node faq_state {
     has answer;
 }
 
-//static graph definition
 // Static graph definition
 graph faq {
     has anchor faq_root;
@@ -38,23 +37,20 @@ walker init {
         spawn here walker::ask;
     }
 }
+
+
 walker ask {
-    can use.qa_classify;
     has question;
     root {
-        question = std.input(">");
+        question = std.input("AMA > ");
         take --> node::faq_root;
     }
     faq_root {
-        answers = -->.answer;
-        best_answer = use.qa_classify(
-            text = question,
-            classes = answers
-        );
-        take --> node::faq_state(answer==best_answer["match"]);
+        // take --> node::faq_state(question==question);
     }
-    faq_state {
+    faq_state {:
         std.out(here.answer);
     }
 }
+
 
