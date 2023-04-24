@@ -1,9 +1,8 @@
 node faq_root;
 node faq_state {
-    has qustion;
+    has question;
     has answer;
 }
-
 // Static graph definition
 graph faq {
     has anchor faq_root;
@@ -29,28 +28,43 @@ graph faq {
         faq_root ++> faq_answer_3;
     }
 }
-
-
 walker init {
     root {
-        spawn here ++> graph::faq;
+        spawn here ++> node::faq_root;
+        spawn here walker::ingest_faq(kb_file="tesla_faq.json");
         spawn here walker::ask;
     }
 }
 
 
 walker ask {
+    can use.qa_classify;
     has question;
     root {
-        question = std.input("AMA > ");
+        question = std.input(">");
         take --> node::faq_root;
     }
     faq_root {
-        // take --> node::faq_state(question==question);
+        answers = -->.answer;
+        best_answer = use.qa_classify(
+            text = question,
+            classes = answers
+        );
+        take --> node::faq_state(answer==best_answer["match"]);
     }
-    faq_state {:
+    faq_state {
         std.out(here.answer);
     }
 }
 
-
+walker ingest_faq {
+    has kb_file;
+    root: take --> node::faq_root;
+    faq_root {
+        kb = file.load_json(kb_file);
+        for faq in kb {
+            answer = faq["answer"];
+            spawn here ++> node::faq_state(answer=answer);
+        }
+    }
+}
