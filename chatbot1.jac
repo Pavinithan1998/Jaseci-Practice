@@ -82,6 +82,7 @@ graph chatbot{
         current_balance +[transition(selected="Main menu")]+> main_root;
         fixed_balance +[transition(selected="Main menu")]+> main_root;
         joint_balance +[transition(selected="Main menu")]+> main_root;
+        
         saving_balance +[transition(selected="Make transaction")]+> transaction;
         saving_balance +[transition(selected="Make transaction")]+> transaction;
         current_balance +[transition(selected="Make transaction")]+> transaction;
@@ -123,6 +124,105 @@ graph chatbot{
         peoples_transfer +[transition(selected="Main menu")]+> main_root;
         interbank_transfer +[transition(selected="Main menu")]+> main_root;
         branch_transfer +[transition(selected="Main menu")]+> main_root;
+
+        //level 2
+        add_new = spawn message +[transition(selected="Peoples bank")]+> node::state(
+            title="addnew",
+            message="Your new number is added",
+            prompts=["Main menu", "Quit"]
+        );
+
+        stop_current = spawn message +[transition(selected="Peoples bank")]+> node::state(
+            title="stopcurrent",
+            message="Your new number is added",
+            prompts=["Main menu", "Quit"]
+        );
+
+        message +[transition(selected="Add new")]+> add_new;
+        message +[transition(selected="Stop current")]+> stop_current;
+
+        add_new +[transition(selected="Main menu")]+> main_root;
+        stop_current +[transition(selected="Main menu")]+> main_root;
+
+        //level 2 
+        check_pawn_status = spawn pawning +[transition(selected="Check my status")]+> node::state(
+            title="checkpawnstatus",
+            message="You currently have 100,100.00 woth of pawning",
+            prompts=["Main menu", "Quit"]
+        );
+
+        current_pawn_rates = spawn pawning +[transition(selected="Current rates")]+> node::state(
+            title="currentpawnrates",
+            message="Select category: ",
+            prompts=["Gold", "Silver", "Diamond"]
+        );
+
+        pawn_auctions = spawn pawning +[transition(selected="Auctions")]+> node::state(
+            title="pawnauctions",
+            message="Select category: ",
+            prompts=["Gold", "Silver", "Diamond"]
+        );
+
+        pawning +[transition(selected="Check my status")]+> check_pawn_status;
+        pawning +[transition(selected="Current rates")]+> current_pawn_rates;
+        pawning +[transition(selected="Auctions")]+> pawn_auctions;
+    
+        check_pawn_status +[transition(selected="Main menu")]+> main_root;
+
+        //level 3
+        gold_rate = spawn current_pawn_rates +[transition(selected="Gold")]+> node::state(
+            title="goldrate",
+            message="Gold current pawning rate is 100,000.00 per gram",
+            prompts=["Main menu", "Quit"]
+        );
+
+        silver_rate = spawn current_pawn_rates +[transition(selected="Silver")]+> node::state(
+            title="silverrate",
+            message="silver current pawning rate is 50,000.00 per gram",
+            prompts=["Main menu", "Quit"]
+        );
+
+        diamond_rate = spawn current_pawn_rates +[transition(selected="Diamond")]+> node::state(
+            title="diamondrate",
+            message="diamond current pawning rate is 250,000.00 per gram",
+            prompts=["Main menu", "Quit"]
+        );
+
+        current_pawn_rates +[transition(selected="Gold")]+> gold_rate;
+        current_pawn_rates +[transition(selected="Silver")]+> silver_rate;
+        current_pawn_rates +[transition(selected="Diamond")]+> diamond_rate;
+
+        gold_rate +[transition(selected="Main menu")]+> main_root;
+        silver_rate +[transition(selected="Main menu")]+> main_root;
+        diamond_rate +[transition(selected="Main menu")]+> main_root;
+
+        //level 3
+        gold_auction = spawn pawn_auctions +[transition(selected="Gold")]+> node::state(
+            title="goldauction",
+            message="Gold current auctions displayed here",
+            prompts=["Main menu", "Quit"]
+        );
+
+        silver_auction = spawn pawn_auctions +[transition(selected="Silver")]+> node::state(
+            title="silverauction",
+            message="silver current auctions displayed here",
+            prompts=["Main menu", "Quit"]
+        );
+
+        diamond_auction = spawn pawn_auctions +[transition(selected="Diamond")]+> node::state(
+            title="diamondauction",
+            message="diamond current auctions displayed here",
+            prompts=["Main menu", "Quit"]
+        );
+
+        pawn_auctions +[transition(selected="Gold")]+> gold_auction;
+        pawn_auctions +[transition(selected="Silver")]+> silver_auction;
+        pawn_auctions +[transition(selected="Diamond")]+> diamond_auction;
+
+        gold_auction +[transition(selected="Main menu")]+> main_root;
+        silver_auction +[transition(selected="Main menu")]+> main_root;
+        diamond_auction +[transition(selected="Main menu")]+> main_root;
+    
     }
 }
 walker talker {

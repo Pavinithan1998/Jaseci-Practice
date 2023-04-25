@@ -6,6 +6,7 @@ node faq_state {
 // Static graph definition
 graph faq {
     has anchor faq_root;
+    
     spawn {
         // Spawning the nodes
         faq_root = spawn node::faq_root;
@@ -32,7 +33,7 @@ walker init {
     root {
         spawn here ++> node::faq_root;
         spawn here walker::ingest_faq(kb_file="tesla_faq.json");
-        spawn here walker::ask;
+        // spawn here walker::ask;
     }
 }
 
